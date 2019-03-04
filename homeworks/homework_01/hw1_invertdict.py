@@ -3,25 +3,29 @@
 
 
 def invert_dict(source_dict):
-    raise NotImplementedError
-    new_dict = {}
     if not isinstance(source_dict, dict):
-        return dict()
+        raise NotImplementedError
 
-    def pushValue(key, value):
-        if new_dict.get(key) is None:
-            new_dict[key] = value
-        elif isinstance(new_dict[key], list):
-            new_dict[key].append(value)
-        else:
-            new_dict[key] = [new_dict[key], value]
-    for key, value in source_dict.items():
-        if (isinstance(value, list) or isinstance(value, set) or
-                isinstance(value, tuple)):
+    def value_to_list(value):
+        result_list = []
+        if isinstance(value, list) or isinstance(value, set):
             for i in value:
-                pushValue(i, key)
+                result_list += value_to_list(i)
         else:
-            pushValue(value, key)
+            result_list.append(value)
+        return result_list
+
+    new_dict = {}
+    for key, value in source_dict.items():
+        for i in value_to_list(value):
+            if i in new_dict:
+                if isinstance(new_dict[i], list):
+                    new_dict[i].append(key)
+                else:
+                    item = new_dict.get(i)
+                    new_dict[i] = [item, key]
+            else:
+                new_dict[i] = key
     return new_dict
     '''
     Функция которая разворачивает словарь, т.е.
