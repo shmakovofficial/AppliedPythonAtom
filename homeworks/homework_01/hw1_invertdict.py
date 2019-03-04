@@ -4,15 +4,17 @@
 
 def invert_dict(source_dict):
     result = {}
+
     def pushValue(key, value):
-        if result.get(key) == None:
+        if result.get(key) is None:
             result[key] = value
         elif isinstance(result[key], list):
             result[key].append(value)
         else:
             result[key] = [result[key], value]
     for key, value in source_dict:
-        if isinstance(value, list) or isinstance(value, set) or isinstance(value, tuple):
+        if (isinstance(value, list) or isinstance(value, set)
+                or isinstance(value, tuple)):
             for i in value:
                 pushValue(i, key)
         else:

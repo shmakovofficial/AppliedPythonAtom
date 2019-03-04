@@ -7,6 +7,8 @@ def is_bracket_correct(input_string):
     for i in input_string:
         if i == "[" or i == "{" or i == "(":
             lookup.append(i)
+        elif len(lookup) is 0:
+            return False
         elif i == "]":
             if lookup.pop() != "[":
                 return False

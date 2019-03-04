@@ -4,13 +4,25 @@
 
 def calculator(x, y, operator):
     if operator == "plus":
-        return x + y
+        if x.isdigit() and y.isdigit():
+            return x + y
+        else:
+            return None
     elif operator == "minus":
-        return x - y
+        if x.isdigit() and y.isdigit():
+            return x - y
+        else:
+            return None
     elif operator == "mult":
-        return x * y
+        if x.isdigit() and y.isdigit():
+            return x * y
+        else:
+            return None
     elif operator == "divide":
-        return x / y if y != 0 else None
+        if x.isdigit() and y.isdigit():
+            return x / y if y != 0 else None
+        else:
+            return None
     else:
         return None
     '''
