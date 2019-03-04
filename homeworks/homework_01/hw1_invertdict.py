@@ -3,15 +3,17 @@
 
 
 def invert_dict(source_dict):
-    result = {}
+    new_dict = {}
+    if not isinstance(source_dict, dict):
+        return dict()
 
     def pushValue(key, value):
-        if result.get(key) is None:
-            result[key] = value
-        elif isinstance(result[key], list):
-            result[key].append(value)
+        if new_dict.get(key) is None:
+            new_dict[key] = value
+        elif isinstance(new_dict[key], list):
+            new_dict[key].append(value)
         else:
-            result[key] = [result[key], value]
+            new_dict[key] = [new_dict[key], value]
     for key, value in source_dict.items():
         if (isinstance(value, list) or isinstance(value, set) or
                 isinstance(value, tuple)):

@@ -3,8 +3,8 @@
 
 
 def calculator(x, y, operator):
-    if str(x).isdigit() and str(y).isdigit():
-        x, y = float(x), float(y)
+    if (isinstance(x, int) or isinstance(x, float) or
+            isinstance(y, int) or isinstance(y, float)):
         if operator == "plus":
             return x + y
         elif operator == "minus":
