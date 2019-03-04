@@ -5,20 +5,21 @@
 def is_bracket_correct(input_string):
     lookup = []
     for i in input_string:
-        if i == "[" or i == "{" or i == "(":
-            lookup.append(i)
-        elif len(lookup) is 0:
-            return False
-        elif i == "]":
-            if lookup.pop() != "[":
+        try:
+            if i == "[" or i == "{" or i == "(":
+                lookup.append(i)
+            elif i == "]":
+                if lookup.pop() != "[":
+                    return False
+            elif i == "}":
+                if lookup.pop() != "{":
+                    return False
+            elif i == ")":
+                if lookup.pop() != "(":
+                    return False
+            else:
                 return False
-        elif i == "}":
-            if lookup.pop() != "{":
-                return False
-        elif i == ")":
-            if lookup.pop() != "(":
-                return False
-        else:
+        except IndexError:
             return False
     return True
     '''

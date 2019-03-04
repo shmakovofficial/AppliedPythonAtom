@@ -3,18 +3,18 @@
 
 
 def calculator(x, y, operator):
-    if ((isinstance(x, int) or isinstance(x, float)) and
-            (isinstance(y, int) or isinstance(y, float))):
-        if operator == "plus":
-            return x + y
-        elif operator == "minus":
-            return x - y
-        elif operator == "mult":
-            return x * y
-        elif operator == "divide":
-            return x / y if y != 0 else None
-        else:
-            return None
+    try:
+        x, y = float(x), float(y)
+    except (ValueError, TypeError):
+        return None
+    if operator == "plus":
+        return x + y
+    elif operator == "minus":
+        return x - y
+    elif operator == "mult":
+        return x * y
+    elif operator == "divide":
+        return x / y if y != 0 else None
     else:
         return None
     '''
