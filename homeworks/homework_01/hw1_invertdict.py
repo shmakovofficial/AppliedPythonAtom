@@ -3,6 +3,7 @@
 
 
 def invert_dict(source_dict):
+    raise NotImplementedError
     new_dict = {}
     if not isinstance(source_dict, dict):
         return dict()
