@@ -23,9 +23,3 @@ def invert_dict(source_dict):
     :param source_dict: dict
     :return: new_dict: dict
     '''
-import pickle
-with open("../../tests/tests_data/test_hw_01_invertdict.ini.pkl", "rb") as f:
-    data = pickle.load(f)
-print(data)
-exit()
-
