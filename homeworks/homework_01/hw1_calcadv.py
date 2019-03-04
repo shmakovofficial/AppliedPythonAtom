@@ -11,3 +11,4 @@ def advanced_calculator(input_string):
     :return: результат выполнение операции, если строка валидная - иначе None
     '''
     raise NotImplementedError
+

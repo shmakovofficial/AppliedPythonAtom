@@ -3,6 +3,22 @@
 
 
 def is_bracket_correct(input_string):
+    lookup = []
+    for i in input_string:
+        if i == "[" or i == "{" or i == "(":
+            lookup.append(i)
+        elif i == "]":
+            if lookup.pop() != "[":
+                return False
+        elif i == "}":
+            if lookup.pop() != "{":
+                return False
+        elif i == ")":
+            if lookup.pop() != "(":
+                return False
+        else:
+            return False
+    return True
     '''
     Метод проверяющий является ли поданная скобочная
      последовательность правильной (скобки открываются и закрываются)
@@ -10,4 +26,3 @@ def is_bracket_correct(input_string):
     :param input_string: строка, содержащая 6 типов скобок (,),[,],{,}
     :return: True or False
     '''
-    raise NotImplementedError

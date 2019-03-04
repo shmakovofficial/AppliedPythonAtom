@@ -3,6 +3,11 @@
 
 
 def check_palindrom(input_string):
+    length = len(input_string)
+    for i in range(length // 2):
+        if input_string[i] != input_string[length - i - 1]:
+            return False
+    return True
     '''
     Метод проверяющий строку на то, является ли
     она палиндромом.
@@ -10,4 +15,3 @@ def check_palindrom(input_string):
     :return: True, если строка являестя палиндромом
     False иначе
     '''
-    raise NotImplementedError
