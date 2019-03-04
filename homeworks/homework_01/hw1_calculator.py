@@ -3,8 +3,8 @@
 
 
 def calculator(x, y, operator):
-    if (isinstance(x, int) or isinstance(x, float) or
-            isinstance(y, int) or isinstance(y, float)):
+    if ((isinstance(x, int) or isinstance(x, float)) and
+            (isinstance(y, int) or isinstance(y, float))):
         if operator == "plus":
             return x + y
         elif operator == "minus":

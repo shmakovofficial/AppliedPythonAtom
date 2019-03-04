@@ -21,6 +21,7 @@ def invert_dict(source_dict):
                 pushValue(i, key)
         else:
             pushValue(value, key)
+    return new_dict
     '''
     Функция которая разворачивает словарь, т.е.
     каждому значению ставит в соответствие ключ.
