@@ -3,23 +3,15 @@
 
 
 def calculator(x, y, operator):
-    if operator == "plus":
-        if x.isdigit() and y.isdigit():
+    if str(x).isdigit() and str(y).isdigit():
+        x, y = float(x), float(y)
+        if operator == "plus":
             return x + y
-        else:
-            return None
-    elif operator == "minus":
-        if x.isdigit() and y.isdigit():
+        elif operator == "minus":
             return x - y
-        else:
-            return None
-    elif operator == "mult":
-        if x.isdigit() and y.isdigit():
+        elif operator == "mult":
             return x * y
-        else:
-            return None
-    elif operator == "divide":
-        if x.isdigit() and y.isdigit():
+        elif operator == "divide":
             return x / y if y != 0 else None
         else:
             return None
