@@ -8,7 +8,7 @@ def calculate_determinant(list_of_lists):
             return None
 
     def add_matrix(matrix, el_x, el_y):
-        print("Creating additional matrix from: ", matrix, " without el from: ", el_x, "::", el_y)
+        print("Addmatrix from: ", matrix, "w/: ", el_x, "::", el_y)
         new_matrix = [j.copy() for j in matrix]
         for j in new_matrix:
             j.pop(el_y)
@@ -25,7 +25,8 @@ def calculate_determinant(list_of_lists):
             for j in range(len(matrix)):
                 sign *= -1
                 print("The sign is now: ", sign)
-                result += matrix[0][j] * calc_det(add_matrix(matrix, 0, j)) * sign
+                result += (matrix[0][j] *
+                           calc_det(add_matrix(matrix, 0, j)) * sign)
                 print("Result changed to: ", result)
             return result
 
