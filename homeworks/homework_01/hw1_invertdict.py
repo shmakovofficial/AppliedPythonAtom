@@ -4,7 +4,7 @@
 
 def invert_dict(source_dict):
     if not isinstance(source_dict, dict):
-        raise NotImplementedError
+        return None
 
     def value_to_list(value):
         result_list = []
