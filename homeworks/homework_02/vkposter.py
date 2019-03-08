@@ -11,6 +11,7 @@ class VKPoster:
     def __init__(self):
         self.posts = {}
         self.subscriptions = {}
+        self.users_posts = {}
 
     def user_posted_post(self, user_id: int, post_id: int):
         '''
@@ -22,6 +23,11 @@ class VKPoster:
         '''
         if post_id not in self.posts.keys():
             self.posts[post_id] = [user_id, []]
+        if user_id not in self.users_posts.keys():
+            self.users_posts[user_id] = [post_id]
+        else:
+            if post_id not in self.users_posts.get(user_id):
+                self.users_posts.get(user_id).append(post_id)
 
     def user_read_post(self, user_id: int, post_id: int):
         '''
@@ -58,12 +64,19 @@ class VKPoster:
         :return: Список из post_id размером К из свежих постов в
         ленте пользователя. list
         '''
-        posts = list(self.posts.keys())
-        posts.sort(reverse=True)
-        relevant_posts = [post_id for post_id in posts
-                          if self.posts.get(post_id)[0] in
-                          self.subscriptions.get(user_id)]
-        return relevant_posts[:k]
+        using_heap = True
+        if using_heap:
+            return FastSortedListMerger.merge_first_k(
+                [self.users_posts.get(i)for i in
+                 self.subscriptions.get(user_id) if i in
+                 self.users_posts.keys()], k)
+        else:
+            posts = list(self.posts.keys())
+            posts.sort(reverse=True)
+            relevant_posts = [post_id for post_id in posts
+                              if self.posts.get(post_id)[0] in
+                              self.subscriptions.get(user_id)]
+            return relevant_posts[:k]
 
     def get_most_popular_posts(self, k: int) -> list:
         '''
@@ -73,8 +86,14 @@ class VKPoster:
         необходимо вывести. Число.
         :return: Список из post_id размером К из популярных постов. list
         '''
-        posts = list(self.posts.keys())
-        posts.sort(key=lambda post_id: (len(self.posts.get(post_id)[1]),
-                                        post_id), reverse=True)
-        posts = posts[:k]
-        return posts
+        using_heap = True
+        if using_heap:
+            h = MaxHeap([(len(self.posts.get(i)[1]), i)
+                         for i in list(self.posts.keys())])
+            return [h.extract_maximum()[1] for i in range(k)]
+        else:
+            posts = list(self.posts.keys())
+            posts.sort(key=lambda post_id: (len(self.posts.get(post_id)[1]),
+                                            post_id), reverse=True)
+            posts = posts[:k]
+            return posts

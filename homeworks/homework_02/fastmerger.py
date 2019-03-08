@@ -18,6 +18,6 @@ class FastSortedListMerger:
         merged_list = list(map(lambda x: (x, x), merged_list))
         h = MaxHeap(merged_list)
         result = list()
-        for i in range(k):
+        for i in range(min(k, len(merged_list))):
             result.append(h.extract_maximum()[0])
         return result
