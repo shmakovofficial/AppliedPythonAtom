@@ -9,7 +9,8 @@ from homeworks.homework_02.fastmerger import FastSortedListMerger
 class VKPoster:
 
     def __init__(self):
-        raise NotImplementedError
+        self.posts = {}
+        self.subscriptions = {}
 
     def user_posted_post(self, user_id: int, post_id: int):
         '''
@@ -19,7 +20,8 @@ class VKPoster:
         :param post_id: id поста. Число.
         :return: ничего
         '''
-        pass
+        if post_id not in self.posts.keys():
+            self.posts[post_id] = [user_id, []]
 
     def user_read_post(self, user_id: int, post_id: int):
         '''
@@ -29,7 +31,10 @@ class VKPoster:
         :param post_id: id поста. Число.
         :return: ничего
         '''
-        pass
+        if post_id not in self.posts.keys():
+            self.user_posted_post(-1, post_id)
+        if user_id not in self.posts.get(post_id)[1]:
+            self.posts.get(post_id)[1].append(user_id)
 
     def user_follow_for(self, follower_user_id: int, followee_user_id: int):
         '''
@@ -39,9 +44,12 @@ class VKPoster:
         :param followee_user_id: id пользователя. Число.
         :return: ничего
         '''
-        pass
+        if follower_user_id not in self.subscriptions.keys():
+            self.subscriptions[follower_user_id] = [followee_user_id]
+        else:
+            self.subscriptions.get(follower_user_id).append(followee_user_id)
 
-    def get_recent_posts(self, user_id: int, k: int)-> list:
+    def get_recent_posts(self, user_id: int, k: int) -> list:
         '''
         Метод который вызывается когда пользователь user_id
         запрашивает k свежих постов людей на которых он подписан.
@@ -50,7 +58,12 @@ class VKPoster:
         :return: Список из post_id размером К из свежих постов в
         ленте пользователя. list
         '''
-        pass
+        posts = list(self.posts.keys())
+        posts.sort(reverse=True)
+        relevant_posts = [post_id for post_id in posts
+                          if self.posts.get(post_id)[0] in
+                          self.subscriptions.get(user_id)]
+        return relevant_posts[:k]
 
     def get_most_popular_posts(self, k: int) -> list:
         '''
@@ -60,4 +73,8 @@ class VKPoster:
         необходимо вывести. Число.
         :return: Список из post_id размером К из популярных постов. list
         '''
-        pass
+        posts = list(self.posts.keys())
+        posts.sort(key=lambda post_id: (len(self.posts.get(post_id)[1]),
+                                        post_id), reverse=True)
+        posts = posts[:k]
+        return posts
