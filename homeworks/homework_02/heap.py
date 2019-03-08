@@ -56,13 +56,3 @@ def comparator_d(x, y):
         return True
     else:
         return False
-
-
-'''
-import pickle
-
-with open("../../tests/tests_data/test_hw_02_fastmerger.ini.pkl", "rb") as f:
-    data = pickle.load(f)
-    for i in data:
-        print(i)
-'''
