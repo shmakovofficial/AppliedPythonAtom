@@ -15,9 +15,12 @@ def _parse_to_list(filename, file_charset, file_format):
         s = list()
         if file_format == 'json':
             sr = json.load(f)
-            s.append(list(sr[0].keys()))
-            for i in sr:
-                s.append(list(i.values()))
+            try:
+                s.append(list(sr[0].keys()))
+                for i in sr:
+                    s.append(list(i.values()))
+            except (IndexError, KeyError):
+                raise SystemExit("Формат не валиден")
         else:
             sr = csv.reader(f, delimiter="\t")
             for i in sr:
@@ -30,7 +33,7 @@ def printing(filename, file_charset, file_format, headers=True):
     if len(list_of_lists) < 1:
         raise SystemExit("Формат не валиден")
     for i in list_of_lists:
-        if len(i) != len(list_of_lists[0]):
+        if len(i) != 4:
             raise SystemExit("Формат не валиден")
     lengths = list()
     for i in range(len(list_of_lists[0])):
