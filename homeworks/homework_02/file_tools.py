@@ -7,7 +7,7 @@ def testing(filename):
         f = open(filename)
         f.close()
     except FileNotFoundError:
-        raise SystemExit("File not found")
+        raise SystemExit("Файл не найден")
 
 
 def _parse_to_list(filename, file_charset, file_format):
@@ -28,12 +28,10 @@ def _parse_to_list(filename, file_charset, file_format):
 def printing(filename, file_charset, file_format, headers=True):
     list_of_lists = _parse_to_list(filename, file_charset, file_format)
     if len(list_of_lists) < 1:
-        print("Формат не валиден")
-        return None
+        raise SystemExit("Формат не валиден")
     for i in list_of_lists:
         if len(i) != len(list_of_lists[0]):
-            print("Формат не валиден")
-            return None
+            raise SystemExit("Формат не валиден")
     lengths = list()
     for i in range(len(list_of_lists[0])):
         current_length = 0

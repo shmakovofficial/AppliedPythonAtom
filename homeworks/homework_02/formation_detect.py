@@ -28,4 +28,4 @@ def formation(filename, charset):
     elif _is_tsv(filename, charset):
         return 'tsv'
     else:
-        raise SystemExit("Wrong format")
+        raise SystemExit("Формат не валиден")
