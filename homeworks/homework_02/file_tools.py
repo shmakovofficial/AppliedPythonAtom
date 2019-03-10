@@ -40,7 +40,7 @@ def printing(filename, file_charset, file_format, headers=True):
         for j in list_of_lists:
             current_length = max(len(str(j[i])), current_length)
         lengths.append(current_length)
-    print("-" * (sum(lengths) + 4 * len(lengths) + 1))
+    print("-" * (sum(lengths) + 5 * len(lengths) + 1))
     if headers:
         data_headers = list_of_lists.pop(0)
         for i, j in enumerate(data_headers):
@@ -51,4 +51,4 @@ def printing(filename, file_charset, file_format, headers=True):
             output = "|  {:" + (">" if j == len(i) - 1 else "<") + "{width}}  "
             print(output.format(k, width=lengths[j]), end='')
         print("|")
-    print("-" * (sum(lengths) + 4 * len(lengths) + 1))
+    print("-" * (sum(lengths) + 5 * len(lengths) + 1))
