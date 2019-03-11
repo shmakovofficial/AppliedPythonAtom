@@ -1,42 +1,36 @@
-import json
-import csv
-
-
-def testing(filename):
+def _is_utf16(filename: str):
     try:
-        f = open(filename)
-        f.close()
-    except FileNotFoundError:
-        raise SystemExit("Файл не найден")
+        with open(filename, encoding='utf16') as f:
+            s = f.read(8)
+    except UnicodeError:
+        return False
+    return True
 
 
-def _parse_to_list(filename, file_charset, file_format):
-    with open(filename, encoding=file_charset) as f:
-        s = list()
-        if file_format == 'json':
-            sr = json.load(f)
-            try:
-                s.append(list(sr[0].keys()))
-                for i in sr:
-                    if list(i.keys()) != s[0]:
-                        raise KeyError
-                    s.append(list(i.values()))
-            except (IndexError, KeyError):
-                raise SystemExit("Формат не валиден")
-        else:
-            sr = csv.reader(f, delimiter="\t")
-            for i in sr:
-                s.append(i)
-    return s
+def _is_utf8(filename: str):
+    try:
+        with open(filename, encoding='utf8') as f:
+            s = f.read(8)
+    except UnicodeError:
+        return False
+    return True
 
 
-def printing(filename, file_charset, file_format, headers=True):
-    list_of_lists = _parse_to_list(filename, file_charset, file_format)
+def charset(filename: str):
+    if _is_utf16(filename):
+        return 'utf16'
+    elif _is_utf8(filename):
+        return 'utf8'
+    else:
+        return 'cp1251'
+
+
+def printing(list_of_lists: list, headers=True):
     if len(list_of_lists) < 1:
-        raise SystemExit("Формат не валиден")
+        raise ValueError("Формат не валиден")
     for i in list_of_lists:
         if len(i) != len(list_of_lists[0]) or len(i) == 0:
-            raise SystemExit("Формат не валиден")
+            raise ValueError("Формат не валиден")
     lengths = list()
     for i in range(len(list_of_lists[0])):
         current_length = 0

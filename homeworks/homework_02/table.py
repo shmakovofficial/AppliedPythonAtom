@@ -1,22 +1,17 @@
 import sys
-from charset_detect import charset
-from formation_detect import formation
-from file_tools import printing, testing
+from file_tools import charset
+from json_tools import print_json
+from tsv_tools import print_tsv
 
 if __name__ == '__main__':
     try:
         file_name = sys.argv[1]
-    except IndexError:
-        print("Файл не валиден")
-    else:
+        file_charset = charset(file_name)
         try:
-            testing(file_name)
-        except SystemExit:
-            print("Файл не валиден")
-        else:
-            try:
-                file_charset = charset(file_name)
-                file_format = formation(file_name, file_charset)
-                printing(file_name, file_charset, file_format)
-            except SystemExit:
-                print("Формат не валиден")
+            print_json(file_name, file_charset)
+        except ValueError:
+            print_tsv(file_name, file_charset)
+    except (FileNotFoundError, IndexError):
+        print("Файл не валиден")
+    except (ValueError, RuntimeError) as e:
+        print(e.args[0])
