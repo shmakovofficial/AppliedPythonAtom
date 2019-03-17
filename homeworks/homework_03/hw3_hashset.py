@@ -1,32 +1,40 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-from homeworks.homework_03.hw3_hashmap import HashMap
+from .hw3_hashmap import HashMap
 
 
-class HashSet:
+class HashSet(HashMap):
 
     def __init__(self):
         # TODO Сделать правильно =)
-        raise NotImplementedError
+        super().__init__()
 
     def get(self, key, default_value=None):
         # TODO достаточно переопределить данный метод
-        raise NotImplementedError
+        other = self.Entry(key, key)
+        for i in self.bucket_list[self._get_index(self._get_hash(key))]:
+            if i == other:
+                return True
+        return False
 
-    def put(self, key, value):
+    def put(self, key, value=None):
         # TODO метод put, нужно переопределить данный метод
-        raise NotImplementedError
+        super().put(key, None)
 
     def __len__(self):
         # TODO Возвращает количество Entry в массиве
-        raise NotImplementedError
+        return super().__len__()
 
     def values(self):
         # TODO возвращать итератор значений
-        raise NotImplementedError
+        return super().keys()
 
     def intersect(self, another_hashset):
         # TODO метод, возвращающий новый HashSet
         #  элементы - пересечение текущего и другого
-        raise NotImplementedError
+        new_set = HashSet()
+        for i in super().keys():
+            if i in another_hashset:
+                new_set.put(i)
+        return new_set

@@ -39,7 +39,9 @@ class HashMap:
         :param bucket_num: число бакетов при инициализации
         '''
         self.bucket_count = bucket_num
-        self.bucket_list = [[]] * self.bucket_count
+        self.bucket_list = []
+        for i in range(self.bucket_count):
+            self.bucket_list.append(list())
 
     def get(self, key, default_value=None):
         # TODO метод get, возвращающий значение,
@@ -104,18 +106,19 @@ class HashMap:
     def __str__(self):
         # TODO Метод выводит "buckets: {}, items: {}"
         output = ""
-        output += "buckets:{"
         for i, j in enumerate(self.bucket_list):
             if len(j) > 0:
-                output += " {},".format(i)
-        output += "}, items: {"
-        for i in self.items():
-            output += " {},".format(i)
-        output += "}"
-        return output.replace(",}", "}")
+                output += "Bucket {}:[".format(i)
+                for k in self.bucket_list[i]:
+                    output += "{}, ".format(k.get_key())
+                output += "], "
+        return output.replace(", ]", "]")
 
     def __contains__(self, item):
-        return item in self.keys()
+        for i in self.bucket_list[self._get_index(self._get_hash(item))]:
+            if i.get_key() == item:
+                return True
+        return False
 
     class _Iterator:
         def __init__(self, iterable, limit):
@@ -123,18 +126,22 @@ class HashMap:
             self.bucket_index = 0
             self.list_index = 0
             self.map_capacity = limit
+            self._position()
 
         def __iter__(self):
             return self
 
         def _position(self):
-            while self.bucket_index < self.map_capacity:
-                if self.list_index < \
-                        len(self.bucket_list[self.bucket_index]):
-                    return
-                else:
-                    self.list_index = 0
-                    self.bucket_index += 1
+            try:
+                while True:
+                    if self.list_index < \
+                            len(self.bucket_list[self.bucket_index]):
+                        return
+                    else:
+                        self.list_index = 0
+                        self.bucket_index += 1
+            except IndexError:
+                return
 
         def __next__(self):
             try:
