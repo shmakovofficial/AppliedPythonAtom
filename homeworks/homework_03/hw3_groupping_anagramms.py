@@ -22,5 +22,18 @@ def groupping_anagramms(words):
     :param words: list of words (words in str format)
     :return: list of lists of words
     """
+
     # TODO: реализовать функцию
-    raise NotImplementedError
+    result = []
+    for i, j in enumerate(words):
+        if j is None:
+            result.append(None)
+            continue
+        result.append([j])
+        for m in range(i + 1, len(words)):
+            if words[m] is not None and \
+                    ''.join(sorted(j.lower())) == \
+                    ''.join(sorted(words[m].lower())):
+                result[i].append(words[m])
+                words[m] = None
+    return [i for i in result if i is not None]
