@@ -47,20 +47,7 @@ class OrdinaryFileWorker(RemoteFileReader):
             f.write(super().read_file(filename))
 
 
-class MockOrdinaryFileWorker(OrdinaryFileWorker):
-    '''
-    Необходимо отнаследовать данный класс так, чтобы
-     он вместо запросов на удаленный сервер:
-      при transfer_to_remote считывал filename
-     из локальной директории ./test_dir и сохранял filename.tmp
-     в локальной директории ./tmpf
-      при transfer_to_local считывал filename.tmp
-     из локальной директории ./test_dir и сохранял в filename
-     в локальной директории ./tmpf
-      при удалении объекта директория ./tmp должна удаляться
-      при создании объекта, директория ./tmp должна создаваться
-     если еще не создана
-    '''
+class LocalFileWorker:
     FOLDER_PATH = './tmpf/'
     TEST_PATH = './homeworks/homework_03/test_dir/'
 
@@ -96,6 +83,22 @@ class MockOrdinaryFileWorker(OrdinaryFileWorker):
                 if os.path.isfile(self.FOLDER_PATH + i):
                     os.remove(self.FOLDER_PATH + i)
             os.rmdir(self.FOLDER_PATH)
+
+
+class MockOrdinaryFileWorker(LocalFileWorker, OrdinaryFileWorker):
+    '''
+    Необходимо отнаследовать данный класс так, чтобы
+     он вместо запросов на удаленный сервер:
+      при transfer_to_remote считывал filename
+     из локальной директории ./test_dir и сохранял filename.tmp
+     в локальной директории ./tmpf
+      при transfer_to_local считывал filename.tmp
+     из локальной директории ./test_dir и сохранял в filename
+     в локальной директории ./tmpf
+      при удалении объекта директория ./tmp должна удаляться
+      при создании объекта, директория ./tmp должна создаваться
+     если еще не создана
+    '''
 
 
 class LLNode:
