@@ -61,8 +61,8 @@ class MockOrdinaryFileWorker(OrdinaryFileWorker):
       при создании объекта, директория ./tmp должна создаваться
      если еще не создана
     '''
-    FOLDER_PATH = '.\\tmpf\\'
-    TEST_PATH = '.\\homeworks\\homework_03\\test_dir\\'
+    FOLDER_PATH = './tmpf/'
+    TEST_PATH = './homeworks/homework_03/test_dir/'
 
     def __init__(self):
         if not os.path.isdir(self.FOLDER_PATH):
