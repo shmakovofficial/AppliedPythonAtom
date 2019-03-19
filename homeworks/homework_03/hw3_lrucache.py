@@ -31,24 +31,25 @@ class LRUCacheDecorator:
 
         def _cached_index(arg):
             for i, j in enumerate(self.cache):
-                if j['item'] == arg:
+                if j['arg'] == arg:
                     return i
 
-        def _dec(item):
-            index = _cached_index(item)
+        def _dec(*args, **kwargs):
+            arg = str(args) + str(kwargs)
+            index = _cached_index(arg)
             if index is not None:
                 temp = self.cache.pop(index)
                 if self.ttl and \
                         temp['time'] < int(time.time() * 1000.0) - self.ttl:
                     temp = {
-                        'item': item,
-                        'result': self.function(item),
+                        'arg': arg,
+                        'result': self.function(*args, **kwargs),
                         'time': int(time.time() * 1000.0)
                     }
             else:
                 temp = {
-                    'item': item,
-                    'result': self.function(item),
+                    'arg': arg,
+                    'result': self.function(*args, **kwargs),
                     'time': int(time.time() * 1000.0)
                 }
                 self.length += 1
