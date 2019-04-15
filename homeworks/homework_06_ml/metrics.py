@@ -12,11 +12,12 @@ def mse(y_true, y_hat, derivative=False):
     :param y_hat: vector of estimated target values
     :return: loss
     """
-    if not derivative:
-        return ((y_true - y_hat) ** 2).mean()
-    else:
-        return ((2 * (y_true - y_hat) - ((y_true - y_hat) ** 2).mean()) /
+    if derivative:
+        return ((y_true - y_hat) /
+                np.linalg.norm((y_true - y_hat)) /
                 y_true.shape[0])
+    else:
+        return ((y_true - y_hat) ** 2).mean()
 
 
 def mae(y_true, y_hat):
