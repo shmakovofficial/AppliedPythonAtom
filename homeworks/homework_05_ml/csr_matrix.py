@@ -40,7 +40,7 @@ class CSRMatrix:
         elif isinstance(init_matrix_representation, np.ndarray):
             self.A = np.array([])
             self.IA = np.zeros(
-                init_matrix_representation.shape[0] + 2,
+                init_matrix_representation.shape[0] + 1,
                 dtype=int
             )
             self.JA = np.array([], dtype=int)
@@ -103,7 +103,7 @@ class CSRMatrix:
         Return dense representation of matrix (2D np.array).
         """
         matrix = np.zeros((self.IA.shape[0] - 1, self.size))
-        for i in range(0, self.IA.shape[0] - 2):
+        for i in range(0, self.IA.shape[0] - 1):
             for j in range(self.IA[i], self.IA[i + 1]):
                 matrix[i][self.JA[j]] = self.A[j]
         return matrix
