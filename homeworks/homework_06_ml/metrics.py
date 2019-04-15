@@ -14,7 +14,7 @@ def mse(y_true, y_hat, derivative=False):
     """
     if derivative:
         return ((y_true - y_hat) /
-                np.linalg.norm((y_true - y_hat)) /
+                np.linalg.norm((y_true - y_hat).T) /
                 y_true.shape[0])
     else:
         return ((y_true - y_hat) ** 2).mean()

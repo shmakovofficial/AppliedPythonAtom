@@ -2,10 +2,11 @@
 # coding: utf-8
 
 import numpy as np
+from metrics import mse
 
 
 class LinearRegression:
-    def __init__(self, lambda_coef=1.0, regulatization=None, alpha=0.5):
+    def __init__(self, lambda_coef=0.1, regulatization=None, alpha=0.1):
         """
         :param lambda_coef: constant coef for gradient descent step
         :param regulatization: regularizarion type ("L1" or "L2") or None
@@ -14,7 +15,7 @@ class LinearRegression:
         self.lambda_step = lambda_coef
         self.fitted = False
         self.weights = None
-        self.MAX_STEPS = 10
+        self.MAX_STEPS = 1000
         self.delta = 10 ** (-3)
         self.min_ = None
         self.max_ = None
@@ -22,46 +23,59 @@ class LinearRegression:
         self.std_ = None
         if regulatization == "L1":
             def l1_loss(x, y):
-                return ((y - x @ self.weights).T
-                        @ (y - x @ self.weights)) \
-                       / self.weights.shape[0] \
-                       + alpha * np.abs(self.weights[1:]).sum()
+                return (mse(y, x @ self.weights) +
+                        alpha * np.abs(self.weights[1:]).sum())
 
             def l1_loss_grad(x, y):
-                return (2 / self.weights.shape[0] *
-                        (x @ self.weights - y).T * x +
+                return (2 / y.shape[0] *
+                        ((x @ self.weights - y).T @ x) +
                         alpha * np.sign(self.weights[1:])).T
 
             self.tools = l1_loss, l1_loss_grad
         elif regulatization == "L2":
             def l2_loss(x, y):
-                return ((y - x @ self.weights).T
-                        @ (y - x @ self.weights)) \
-                       / self.weights.shape[0] \
-                       + alpha * np.linalg.norm(self.weights[1:])
+                return (mse(y, x @ self.weights) +
+                        alpha * np.linalg.norm(self.weights[1:].T))
 
             def l2_loss_grad(x, y):
-                return (2 / self.weights.shape[0] *
-                        (x @ self.weights - y).T * x +
-                        alpha * 2 * self.weights[1:].T).T
+                return (2 / y.shape[0] *
+                        ((x @ self.weights - y).T @ x) +
+                        alpha * 2 * self.weights[1:]).T
 
             self.tools = l2_loss, l2_loss_grad
         else:
             def loss(x, y):
-                return ((y - x @ self.weights).T
-                        @ (y - x @ self.weights)) \
-                       / self.weights.shape[0]
+                return mse(y, x @ self.weights)
 
             def loss_grad(x, y):
-                return (2 / self.weights.shape[0] *
-                        (x @ self.weights - y).T * x).T
+                return (2 / y.shape[0] *
+                        ((x @ self.weights - y).T @ x)).T
 
             self.tools = loss, loss_grad
 
-    def _calibrate(self, data):
-        x = (data - self.mean_) / self.std_
-        x = (data - self.min_) / (self.max_ - self.min_)
-        return x
+    def _calibrate_data(self, data, fit=True):
+        if fit:
+            self.data_mean = data.mean()
+            self.data_std = data.std()
+        x = (data - self.data_mean) / self.data_std
+        if fit:
+            self.data_min = x.min()
+            self.data_max = x.max()
+        x = (x - self.data_min) / (self.data_max - self.data_min)
+        return np.hstack((np.ones((x.shape[0], 1)), x))
+
+    def _calibrate_result(self, result):
+        self.result_mean = result.mean()
+        self.result_std = result.std()
+        y = (result - self.result_mean) / self.result_std
+        self.result_min = y.min()
+        self.result_max = y.max()
+        y = (y - self.result_min) / (self.result_max - self.result_min)
+        return y
+
+    def _expand_result(self, result):
+        return (result * (self.result_max - self.result_min) +
+                self.result_min) * self.result_std + self.result_mean
 
     def fit(self, X_train, y_train):
         """
@@ -70,23 +84,14 @@ class LinearRegression:
         :param y_train: target values for training data
         :return: None
         """
-        self.mean_ = X_train.mean()
-        self.std_ = X_train.std()
-        self.min_ = X_train.min()
-        self.max_ = X_train.max()
-        x = self._calibrate(X_train)
-        x = np.hstack((np.ones((X_train.shape[0], 1)), X_train))
+        x = self._calibrate_data(X_train)
+        y = self._calibrate_result(y_train)
         self.weights = np.ones((x.shape[1], 1))
         count = 0
-        prev_result = 0
         while count < self.MAX_STEPS:
-            result = self.tools[0](X_train, y_train)
-            self.weights -= self.lambda_step * self.tools[1](X_train, y_train)
-            if count == 0:
-                prev_result = result
-            else:
-                if prev_result - result < self.delta:
-                    break
+            self.weights -= self.lambda_step * self.tools[1](x, y)
+            if self.tools[0](x, y) < self.delta:
+                break
             count += 1
         self.fitted = True
 
@@ -102,9 +107,8 @@ class LinearRegression:
             if X_test.shape[1] != self.weights.shape[0] - 1:
                 raise Exception("Undefined")
             else:
-                x = self._calibrate(X_test)
-                return (np.hstack((np.ones((x.shape[0], 1)), x)) @
-                        self.weights)
+                x = self._calibrate_data(X_test, fit=False)
+                return self._expand_result(x @ self.weights)
 
     def get_weights(self):
         """
