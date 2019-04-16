@@ -29,7 +29,7 @@ class LinearRegression:
             def l1_loss_grad(x, y):
                 return (2 / y.shape[0] *
                         ((x @ self.weights - y).T @ x) +
-                        alpha * np.sign(self.weights[1:])).T
+                        alpha * np.sign(self.weights[1:])).reshape([-1, 1])
 
             self.tools = l1_loss, l1_loss_grad
         elif regulatization == "L2":
@@ -40,7 +40,7 @@ class LinearRegression:
             def l2_loss_grad(x, y):
                 return (2 / y.shape[0] *
                         ((x @ self.weights - y).T @ x) +
-                        alpha * 2 * self.weights[1:]).T
+                        alpha * 2 * self.weights[1:]).reshape([-1, 1])
 
             self.tools = l2_loss, l2_loss_grad
         else:
@@ -48,34 +48,38 @@ class LinearRegression:
                 return mse(y, x @ self.weights)
 
             def loss_grad(x, y):
-                return (2 / y.shape[0] *
-                        ((x @ self.weights - y).T @ x)).T
+                return 2 / y.shape[0] * \
+                       ((x @ self.weights - y).T @ x).reshape([-1, 1])
 
             self.tools = loss, loss_grad
 
     def _calibrate_data(self, data, fit=True):
-        if fit:
-            self.data_mean = data.mean()
-            self.data_std = data.std()
-        x = (data - self.data_mean) / self.data_std
-        if fit:
-            self.data_min = x.min()
-            self.data_max = x.max()
-        x = (x - self.data_min) / (self.data_max - self.data_min)
-        return np.hstack((np.ones((x.shape[0], 1)), x))
+        # if fit:
+        #    self.data_mean = data.mean()
+        #    self.data_std = data.std()
+        # x = (data - self.data_mean) / self.data_std
+        # if fit:
+        #    self.data_min = x.min()
+        #    self.data_max = x.max()
+        # x = (x - self.data_min) / (self.data_max - self.data_min)
+        # return np.hstack((np.ones((x.shape[0], 1)), x))
+        return np.hstack((np.ones((data.shape[0], 1)), data))
 
     def _calibrate_result(self, result):
-        self.result_mean = result.mean()
-        self.result_std = result.std()
-        y = (result - self.result_mean) / self.result_std
-        self.result_min = y.min()
-        self.result_max = y.max()
-        y = (y - self.result_min) / (self.result_max - self.result_min)
-        return y
+        # result = result.reshape([-1, 1])
+        # self.result_mean = result.mean()
+        # self.result_std = result.std()
+        # y = (result - self.result_mean) / self.result_std
+        # self.result_min = y.min()
+        # self.result_max = y.max()
+        # y = (y - self.result_min) / (self.result_max - self.result_min)
+        # return y
+        return result
 
     def _expand_result(self, result):
-        return (result * (self.result_max - self.result_min) +
-                self.result_min) * self.result_std + self.result_mean
+        # return (result * (self.result_max - self.result_min) +
+        #        self.result_min) * self.result_std + self.result_mean
+        return result
 
     def fit(self, X_train, y_train):
         """
@@ -118,4 +122,4 @@ class LinearRegression:
         if not self.fitted:
             raise Exception("Model is not fitted")
         else:
-            return self.weights.reshape((1, -1))
+            return self.weights.T
