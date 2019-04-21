@@ -35,13 +35,13 @@ class LogisticRegression:
         def grad_loss(y_true, x_train):
             y = x_train @ self.weights
             return -1 / y_true.shape[0] * \
-                   (x_train *
+                (x_train *
                     (y_true /
                      (1 + np.exp(y)) +
                      (1 - y_true) /
                      (1 + np.exp(1 - y))
                      )
-                    ).sum(axis=0).T
+                 ).sum(axis=0).T
 
         if regularization == "L1":
             def loss_l1(y_true, y_pred):
