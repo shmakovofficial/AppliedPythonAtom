@@ -3,7 +3,10 @@
 
 
 import numpy as np
-from ..metrics.metrics import *
+import sys
+
+sys.path.append('../metrics')
+from metrics import *
 
 
 class LogisticRegression:
@@ -13,7 +16,7 @@ class LogisticRegression:
             regularization=None,
             alpha=0.5,
             threshold=0.5,
-            steps=1000,
+            n_iter=1000,
             delta=0.1
     ):
         """
@@ -22,26 +25,27 @@ class LogisticRegression:
         :param regularization: regularization type ("L1" or "L2") or None
         :param alpha: regularization coefficient
         :param threshold: decision threshold for classification
-        :param steps: maximum steps for gradient descent
+        :param n_iter: maximum steps for gradient descent
         :param delta: convergence criteria for gradient descent
         """
         self.step = lambda_coefficient
         self.weights = None
         self.tools = None
         self.threshold = threshold
-        self.steps = steps
+        self.n_iter = n_iter
         self.delta = delta
+        self.fitted = False
 
         def grad_loss(y_true, x_train):
             y = x_train @ self.weights
             return -1 / y_true.shape[0] * \
-                (x_train *
+                   (x_train *
                     (y_true /
-                     (1 + np.exp(y)) +
+                     (1 + np.exp(y)) -
                      (1 - y_true) /
                      (1 + np.exp(1 - y))
                      )
-                 ).sum(axis=0).T
+                    ).sum(axis=0)
 
         if regularization == "L1":
             def loss_l1(y_true, y_pred):
@@ -50,7 +54,7 @@ class LogisticRegression:
 
             def grad_loss_l1(y_true, x_train):
                 return grad_loss(y_true, x_train) + \
-                       alpha * np.sign(self.weights)
+                       alpha * np.sign(self.weights).T
 
             self.tools = loss_l1, grad_loss_l1
         elif regularization == "L2":
@@ -60,7 +64,7 @@ class LogisticRegression:
 
             def grad_loss_l2(y_true, x_train):
                 return grad_loss(y_true, x_train) + \
-                       alpha * 2 * self.weights
+                       alpha * 2 * self.weights.T
 
             self.tools = loss_l2, grad_loss_l2
         else:
@@ -76,17 +80,20 @@ class LogisticRegression:
         :param y_train: target values for training data
         :return: None
         """
-        x = np.hstack(np.ones(y_train.shape), X_train)
-        self.weights = np.ones((x, 1))
+        x = np.hstack((np.ones((y_train.shape[0], 1)), X_train))
+        self.weights = np.ones((x.shape[1], 1))
         count = 0
         prev_y = x @ self.weights
-        while count < self.steps:
-            self.weights -= self.step * self.tools[1](y_train, x)
+        while count < self.n_iter:
+            self.weights = self.weights - self.step * self.tools[1](y_train, x).reshape((-1, 1))
             new_y = x @ self.weights
-            if (new_y - prev_y) < self.delta:
+            # print("Iter #{}, median average is {}".format(count, abs((new_y - prev_y)).mean()))
+            if (abs((new_y - prev_y)) < self.delta).all():
                 break
             prev_y = new_y
             count += 1
+
+        self.fitted = True
 
     def predict(self, X_test):
         """
@@ -94,9 +101,10 @@ class LogisticRegression:
         :param X_test: test data for predict in
         :return: y_test: predicted values
         """
-        return self.predict_proba(X_test).apply(
-            lambda i: 1 if i >= self.threshold else 0
-        )
+        if not self.fitted:
+            raise ValueError
+
+        return estimate(self.predict_proba(X_test), threshold=self.threshold)
 
     def predict_proba(self, X_test):
         """
@@ -104,7 +112,10 @@ class LogisticRegression:
         :param X_test: test data for predict in
         :return: y_test: predicted probabilities
         """
-        x = np.hstack(np.ones((X_test.shape[0], 1)), X_test)
+        if not self.fitted:
+            raise ValueError
+
+        x = np.hstack((np.ones((X_test.shape[0], 1)), X_test))
         return 1 / (1 + np.exp(-x @ self.weights))
 
     def get_weights(self):
@@ -112,4 +123,6 @@ class LogisticRegression:
         Get weights from fitted linear model
         :return: weights array
         """
+        if not self.fitted:
+            raise ValueError
         return self.weights
