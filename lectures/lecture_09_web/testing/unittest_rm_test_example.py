@@ -16,7 +16,7 @@ class RmTestCase(unittest.TestCase):
     def setUp(self):
         with open(self.tmpfilepath, "w") as f:
             f.write("Delete me!")
-        
+
     def test_rm(self):
         rm(self.tmpfilepath)
         self.assertFalse(os.path.isfile(self.tmpfilepath), "Failed to remove the file.")
