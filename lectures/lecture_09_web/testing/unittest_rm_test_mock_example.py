@@ -9,7 +9,7 @@ from unittest_rm_file_fun import rm
 
 
 class RmTestCase(unittest.TestCase):
-    
+
     @mock.patch('unittest_rm_file_fun.os')
     def test_rm(self, mock_os):
         rm("any path")
