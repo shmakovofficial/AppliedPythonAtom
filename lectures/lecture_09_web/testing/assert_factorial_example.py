@@ -23,4 +23,3 @@ if __name__ == "__main__":
     true_res = 120
     err_message = f"factorial({x}) should be equal to {true_res} (not {factorial(x)})!"
     assert factorial(x) == true_res, err_message
-    
