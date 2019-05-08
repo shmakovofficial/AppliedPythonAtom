@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from unittest_rm_file_fun import rm
 
 import unittest
 from unittest import mock
+
+from unittest_rm_file_fun import rm
 
 
 class RmTestCase(unittest.TestCase):
@@ -13,4 +14,3 @@ class RmTestCase(unittest.TestCase):
     def test_rm(self, mock_os):
         rm("any path")
         mock_os.remove.assert_called_with("any path")
-
