@@ -3,7 +3,7 @@
 
 
 
-Course: https://atom.mail.ru/curriculum/program/discipline/751/
+Course: https://technoatom.mail.ru/curriculum/program/discipline/751/
 
 CI dashboard: https://travis-ci.com/Kinetikm/AppliedPythonAtom
 
