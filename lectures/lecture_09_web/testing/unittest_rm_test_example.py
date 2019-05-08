@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from unittest_rm_file_fun import rm
 
 import os.path
 import tempfile
 import unittest
+
+from unittest_rm_file_fun import rm
+
 
 class RmTestCase(unittest.TestCase):
 
@@ -18,4 +20,3 @@ class RmTestCase(unittest.TestCase):
     def test_rm(self):
         rm(self.tmpfilepath)
         self.assertFalse(os.path.isfile(self.tmpfilepath), "Failed to remove the file.")
-
